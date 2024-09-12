@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"mongodbtees/db"
 	"mongodbtees/model"
 	"mongodbtees/repository"
@@ -26,14 +27,26 @@ func CalculateReport(c *fiber.Ctx) error {
 }
 
 func Calculate(student *model.Student) model.Report {
-	totalmarks := student.Grade.Score
-	percentage := totalmarks * 100 / 100
+	totalmarks := 0
+	for _, grade := range student.Grade {
+		totalmarks += grade.Score
+	}
+	percentage := (totalmarks) / len(student.Grade)
 
-	return model.Report{
+	var report1 = model.Report{
 		ID:         student.ID,
 		Name:       student.Name,
 		Age:        student.Age,
 		TotalMarks: totalmarks,
 		Percentage: float32(percentage),
 	}
-}
+	client, ctx, _ := db.GetMongoClient()
+	_, err := repository.StoreReport(ctx, client, "school", &report1)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return report1
+
+	}
+

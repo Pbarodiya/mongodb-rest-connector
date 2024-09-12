@@ -6,7 +6,7 @@ type Student struct {
 	ID    primitive.ObjectID `bson:"_id,omitempty"`
 	Name  string             `bson:"name"`
 	Age   int                `bson:"age"`
-	Grade Grade              `bson:"grade"`
+	Grade []Grade            `bson:"grade"`
 }
 
 type Grade struct {

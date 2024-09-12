@@ -5,13 +5,13 @@ import (
 	"log"
 	"mongodbtees/model"
 
-	//"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var collname string = "students"
+var reportscoll string = "report"
 
 func addStudentObject(ctx context.Context, client *mongo.Client, student model.Student, dbname string) (*mongo.InsertOneResult, error) {
 	collection := client.Database(dbname).Collection(collname)
@@ -22,46 +22,102 @@ func addStudentObject(ctx context.Context, client *mongo.Client, student model.S
 	return c, nil
 }
 
+// The CreateStudentObject function creates multiple student objects and inserts them into the MongoDB collection specified by collname (which is "students" )
 func CreateStudentObject(ctx context.Context, client *mongo.Client, dbname string) {
 	stud1 := model.Student{
 		Name: "John Doe",
 		Age:  20,
-		Grade: model.Grade{
-			Subject: "Mathematics",
-			Score:   85,
-		}}
+		Grade: []model.Grade{
+			{
+				Subject: "Mathematics",
+				Score:   85,
+			},
+			{
+				Subject: "English",
+				Score:   80,
+			},
+			{
+				Subject: "Science",
+				Score:   72,
+			},
+		},
+	}
 
 	stud2 := model.Student{
-		Name: "Mohn Doe",
-		Age:  22,
-		Grade: model.Grade{
-			Subject: "Mathematics",
-			Score:   80,
-		}}
+		Name: "Dohn Doe",
+		Age:  21,
+		Grade: []model.Grade{
+			{
+				Subject: "Mathematics",
+				Score:   48,
+			},
+			{
+				Subject: "English",
+				Score:   65,
+			},
+			{
+				Subject: "Science",
+				Score:   68,
+			},
+		},
+	}
 
 	stud3 := model.Student{
-		Name: "Sohn Doe",
-		Age:  21,
-		Grade: model.Grade{
-			Subject: "Mathematics",
-			Score:   20,
-		}}
+		Name: "Rianna Leefar",
+		Age:  22,
+		Grade: []model.Grade{
+			{
+				Subject: "Mathematics",
+				Score:   66,
+			},
+			{
+				Subject: "English",
+				Score:   72,
+			},
+			{
+				Subject: "Science",
+				Score:   91,
+			},
+		},
+	}
 
 	stud4 := model.Student{
-		Name: "Rohn Doe",
-		Age:  21,
-		Grade: model.Grade{
-			Subject: "Mathematics",
-			Score:   72,
-		}}
+		Name: "Mark leal",
+		Age:  22,
+		Grade: []model.Grade{
+			{
+				Subject: "Mathematics",
+				Score:   38,
+			},
+			{
+				Subject: "English",
+				Score:   55,
+			},
+			{
+				Subject: "Science",
+				Score:   45,
+			},
+		},
+	}
 
 	stud5 := model.Student{
-		Name: "Pohn Doe",
+		Name: "Dario Leal",
 		Age:  23,
-		Grade: model.Grade{
-			Subject: "Mathematics",
-			Score:   10,
-		}}
+		Grade: []model.Grade{
+			{
+				Subject: "Mathematics",
+				Score:   89,
+			},
+			{
+				Subject: "English",
+				Score:   87,
+			},
+			{
+				Subject: "Science",
+				Score:   90,
+			},
+		},
+	}
 
 	var ListOfStudent = []model.Student{stud1, stud2, stud3, stud4, stud5}
 
@@ -81,10 +137,6 @@ func FetchStudentByID(ctx context.Context, client *mongo.Client, ID string, dbna
 		return nil, err
 	}
 
-	// filterResult, err := collection.Find(ctx, bson.M{})
-	// fmt.Println("FIlter result : ", filterResult)
-	// fmt.Println("error : ", err)
-
 	filter := bson.M{"_id": objectID}
 
 	studentBson := collection.FindOne(ctx, filter)
@@ -97,4 +149,13 @@ func FetchStudentByID(ctx context.Context, client *mongo.Client, ID string, dbna
 
 	return studentDocument, nil
 
+}
+
+func StoreReport(ctx context.Context, client *mongo.Client, dbname string, report *model.Report) (*mongo.InsertOneResult, error) {
+	collection := client.Database(dbname).Collection(reportscoll)
+	r, error := collection.InsertOne(ctx, report)
+	if error != nil {
+		return nil, error
+	}
+	return r, nil
 }
